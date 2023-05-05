@@ -129,7 +129,7 @@ export default function PoemPage() {
         }
         setIA('')
     }
-    /*placeholder*/ 
+    /*placeholder */ 
     /**
      * 
      * @param {Number} i index of an internal allusion inside the rel state variable
