@@ -6,6 +6,7 @@ import { useParams } from 'react-router-dom';
 import 'antd/dist/antd.min.css';
 import TextArea from 'antd/lib/input/TextArea';
 import { Link } from 'react-router-dom';
+import axios from 'axios';
 
 export default function PoemPage() {
     let { chapter, number } = useParams()
@@ -160,6 +161,7 @@ export default function PoemPage() {
     // pulls the content of a poem page based on chapter and number
     useEffect(() => {
         let get = 'match poem=(g:Genji_Poem)-[:INCLUDED_IN]->(:Chapter {chapter_number: "' + chapter + '"}), exchange=(s:Character)-[:SPEAKER_OF]->(g)<-[:ADDRESSEE_OF]-(a:Character), trans=(g)-[:TRANSLATION_OF]-(:Translation)-[:TRANSLATOR_OF]-(:People) where g.pnum ends with "' + number + '" return poem, exchange, trans'
+        
         let getHonkaInfo = 'match (g:Genji_Poem)-[:INCLUDED_IN]->(:Chapter {chapter_number: "' + chapter + '"}), (g)-[n:ALLUDES_TO]->(h:Honka)-[r:ANTHOLOGIZED_IN]-(s:Source), (h)<-[:AUTHOR_OF]-(a:People), (h)<-[:TRANSLATION_OF]-(t:Translation)<-[:TRANSLATOR_OF]-(p:People) where g.pnum ends with "' + number + '" return h.Honka as honka, h.Romaji as romaji, s.title as title, a.name as poet, r.order as order, p.name as translator, t.translation as translation, n.notes as notes'
         let getRel = 'match (g:Genji_Poem)-[:INCLUDED_IN]->(:Chapter {chapter_number: "' + chapter + '"}), (g)-[:INTERNAL_ALLUSION_TO]->(s:Genji_Poem) where g.pnum ends with "' + number + '" return s.pnum as rel'
         let getPnum = 'match (g:Genji_Poem) return g.pnum as pnum'
@@ -179,7 +181,44 @@ export default function PoemPage() {
             const driver = getDriver()
             const session = driver.session()
             const res = await session.readTransaction(tx => tx.run(get))
+            // Adding //
+            const fetchData = async (params = {}) => {
+                try {
+                    
+                    const response = await axios.get('http://localhost:3000/getAllData', { params });
+
+                    // Check if response was successful
+                    if (response.status !== 200) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+            
+                    return response.data;
+                } catch (error) {
+                    console.error(`There was an error! ${error}`);
+                    throw error;
+                }
+            };
+            console.log("chapter number", number)
+            const _try = async () => {
+    // Initialize with default values
+                setTrans({ Waley: 'N/A', Seidensticker: 'N/A', Tyler: 'N/A', Washburn: 'N/A', Cranston: 'N/A' });
+            
+                try {
+                    
+                    const { res1, getHonkaInfo, getRel, getTag, getTagTypes, getPnum } = await fetchData({ chapter, number });
+                    console.log("The call from backend", res1)
+                    // Process and set state as before
+                    // ...
+
+                } catch (error) {
+                    console.error(error);
+
+                }
+            };  
+            
+            _try().catch(console.error);
             const resHonkaInfo = await session.readTransaction(tx => tx.run(getHonkaInfo))
+            console.log('The call from front end', res)
             const resRel = await session.readTransaction(tx => tx.run(getRel))
             const resTag = await session.readTransaction(tx => tx.run(getTag))
             const resType = await session.readTransaction(tx => tx.run(getTagTypes))
@@ -188,6 +227,8 @@ export default function PoemPage() {
             let exchange = new Set()
             res.records.map(e => JSON.stringify(toNativeTypes(e.get('exchange')))).forEach(e => exchange.add(e))
             exchange = Array.from(exchange).map(e => JSON.parse(e))
+
+            console.log('exchange',exchange)
             setSpeaker([exchange[0].start.properties.name])
             setAddressee(exchange.map(e => e.end.properties.name))
             setJPRM([exchange[0].segments[0].end.properties.Japanese, exchange[0].segments[0].end.properties.Romaji])
