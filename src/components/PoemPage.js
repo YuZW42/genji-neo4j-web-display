@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useReducer, useEffect } from 'react'
+eimport React, { useMemo, useState, useReducer, useEffect } from 'react'
 import { initDriver, getDriver, closeDriver } from '../neo4j.js'
 import { toNativeTypes } from './utils'
 import { Button, Col, Divider, Input, Row, Space, Select, Tag, } from 'antd';
@@ -214,7 +214,13 @@ export default function PoemPage() {
                     console.log("The call from backend", res )
                    
                     let exchange = new Set()
-                    res1.records.map(e => JSON.stringify(toNativeTypes(e.get('exchange')))).forEach(e => exchange.add(e))
+d                    
+                    
+                    res.records.map(e => JSON.stringify(toNativeTypes(console.log('backend',e.get('exchange')))))
+                    res1.records.map(e => JSON.stringify(toNativeTypes(console.log('frontend',e.get('exchange')))))
+                    // res1.records.map(e => JSON.stringify(toNativeTypes(e.get('exchange')))).forEach(e => exchange.add(e))
+                    
+                    
             exchange = Array.from(exchange).map(e => JSON.parse(e))
 
             console.log('exchange',exchange)

@@ -1,7 +1,9 @@
 const express = require('express');
 const cors = require('cors');
 const neo4j = require('neo4j-driver');
+const serializeJavascript = require('serialize-javascript');
 const app = express();
+
 require('dotenv').config();
 
 app.use(cors());
@@ -13,10 +15,12 @@ const driver = neo4j.driver(
 
 
 
+
 app.get("/api", (req,res) =>{
   res.json({"users":["user"]})
 
 })
+
 
 app.get('/getAllData', async (req, res) => {
   
@@ -43,10 +47,12 @@ app.get('/getAllData', async (req, res) => {
             ); 
           /*tx.run(queries[key], { chapter, number })*/ 
           result[key] = queryResult;
+          
           console.log('key', key)
           
       }
       console.log('result', result)
+      //res.json(result);
       res.json(result);
   } catch (error) {
       console.error('Failed to execute queries:', error);
