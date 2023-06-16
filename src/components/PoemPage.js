@@ -34,6 +34,9 @@ export default function PoemPage() {
     const [usr, setUsr] = useState('')
     const [pwd, setPwd] = useState('')
 
+    //new
+    //const [res, setRes] = useState(null);
+
     const forceUpdate = useReducer(x => x + 1, 0)[1]
     
     const vincent = [process.env.REACT_APP_USERNAME, process.env.REACT_APP_PASSWORD]
@@ -180,12 +183,13 @@ export default function PoemPage() {
                 process.env.REACT_APP_NEO4J_PASSWORD)
             const driver = getDriver()
             const session = driver.session()
-            const res = await session.readTransaction(tx => tx.run(get))
+            const res1 = await session.readTransaction(tx => tx.run(get))
+           console.log('call from front end', res1)
             // Adding //
             const fetchData = async (params = {}) => {
                 try {
                     
-                    const response = await axios.get('http://localhost:3000/getAllData', { params });
+                    const response = await axios.get('http://localhost:8000/getAllData', { params });
 
                     // Check if response was successful
                     if (response.status !== 200) {
@@ -199,33 +203,18 @@ export default function PoemPage() {
                 }
             };
             console.log("chapter number", number)
+            
             const _try = async () => {
     // Initialize with default values
                 setTrans({ Waley: 'N/A', Seidensticker: 'N/A', Tyler: 'N/A', Washburn: 'N/A', Cranston: 'N/A' });
             
                 try {
                     
-                    const { res1, getHonkaInfo, getRel, getTag, getTagTypes, getPnum } = await fetchData({ chapter, number });
-                    console.log("The call from backend", res1)
-                    // Process and set state as before
-                    // ...
-
-                } catch (error) {
-                    console.error(error);
-
-                }
-            };  
-            
-            _try().catch(console.error);
-            const resHonkaInfo = await session.readTransaction(tx => tx.run(getHonkaInfo))
-            console.log('The call from front end', res)
-            const resRel = await session.readTransaction(tx => tx.run(getRel))
-            const resTag = await session.readTransaction(tx => tx.run(getTag))
-            const resType = await session.readTransaction(tx => tx.run(getTagTypes))
-            const resPnum = await session.readTransaction(tx => tx.run(getPnum))
-            // holds unique values of speaker & addressee & Japanese & Romaji (top row)
-            let exchange = new Set()
-            res.records.map(e => JSON.stringify(toNativeTypes(e.get('exchange')))).forEach(e => exchange.add(e))
+                    const { res, resHonkaInfo, resRel, resTag, resType, resPnum } = await fetchData({ chapter, number });
+                    console.log("The call from backend", res )
+                   
+                    let exchange = new Set()
+                    res1.records.map(e => JSON.stringify(toNativeTypes(e.get('exchange')))).forEach(e => exchange.add(e))
             exchange = Array.from(exchange).map(e => JSON.parse(e))
 
             console.log('exchange',exchange)
@@ -274,6 +263,23 @@ export default function PoemPage() {
             setPnum(pls)
             session.close()
             closeDriver()
+
+                } catch (error) {
+                    console.error(error);
+
+                }
+            };  
+            
+            _try().catch(console.error);
+            //const resHonkaInfo = await session.readTransaction(tx => tx.run(getHonkaInfo))
+            //console.log('The call from front end', res)
+            //console.log("The call from backend2", res)
+            //const resRel = await session.readTransaction(tx => tx.run(getRel))
+            //const resTag = await session.readTransaction(tx => tx.run(getTag))
+            //const resType = await session.readTransaction(tx => tx.run(getTagTypes))
+            //const resPnum = await session.readTransaction(tx => tx.run(getPnum))
+            // holds unique values of speaker & addressee & Japanese & Romaji (top row)
+            
         }
         _().catch(console.error)
     }, [chapter, number])
