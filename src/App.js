@@ -50,6 +50,12 @@ export default function App() {
                   )
                 }, 
                 {
+                  key: 'Poem 2',
+                  label: (
+                    <Link to="/poems2">Poems 2</Link>
+                  )
+                }, 
+                {
                   key: 'Characters',
                   label: (
                     <Link to="/characters">Characters</Link>

@@ -213,16 +213,15 @@ export default function PoemPage() {
                     const { res, resHonkaInfo, resRel, resTag, resType, resPnum } = await fetchData({ chapter, number });
                     console.log("The call from backend", res )
                    
-                    let exchange = new Set();
+                    let exchange = new Set()
                   
                     
+                    res.records.map(e => JSON.stringify(toNativeTypes(console.log('backend',e.get('exchange')))))
+                    res1.records.map(e => JSON.stringify(toNativeTypes(console.log('frontend',e.get('exchange')))))
+                    // res1.records.map(e => JSON.stringify(toNativeTypes(e.get('exchange')))).forEach(e => exchange.add(e))
                     
                     
-                    //res1.records.map(e => JSON.stringify(toNativeTypes(e.get('exchange')))).forEach(e => exchange.add(e))
-                    exchange.add(res.records[1]._fields[1])
-                    console.log("disect",res.records[1]._fields[1])
-                    
-                    exchange = Array.from(exchange).map(e => JSON.parse(e))
+            exchange = Array.from(exchange).map(e => JSON.parse(e))
 
             console.log('exchange',exchange)
             setSpeaker([exchange[0].start.properties.name])
@@ -326,6 +325,8 @@ export default function PoemPage() {
 
     return (
         <div>
+            <h1>Chapter {chapter} - {number}</h1>
+            <h1>Chapter {chapter} - {number}</h1>
             <Row>
                 <Col span={4}>
                     <b>Speaker</b>

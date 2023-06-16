@@ -48,11 +48,12 @@ app.get('/getAllData', async (req, res) => {
           /*tx.run(queries[key], { chapter, number })*/ 
           result[key] = queryResult;
           
-          console.log('key', key)
+          
           
       }
-      console.log('result', result)
-      //res.json(result);
+      
+      
+      
       res.json(result);
   } catch (error) {
       console.error('Failed to execute queries:', error);

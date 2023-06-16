@@ -47,6 +47,16 @@ if (auth) {
           ]
         }, 
         {
+          path: "/poems2",
+          element: <PoemQuery />, 
+          children: [
+            {
+              path: ":chapter/:number",
+              element: <PoemPage />
+            }
+          ]
+        }, 
+        {
           path: "/characters",
           element: <Characters />
         },
