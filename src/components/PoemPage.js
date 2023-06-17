@@ -210,32 +210,40 @@ export default function PoemPage() {
             
                 try {
                     
-                    const { res, resHonkaInfo, resRel, resTag, resType, resPnum } = await fetchData({ chapter, number });
-                    console.log("The call from backend", res )
-                   
-                    let exchange = new Set();
+                    //const { res, resHonkaInfo, resRel, resTag, resType, resPnum } = await fetchData({ chapter, number });
+                    //console.log("The call from backend", res )
+                    const response = await fetchData({ chapter, number });
+                    const exchange = response[0]
+                    const transTemp =response[1]
+                    const sources  = response[2]
+                    const related= response[3]
+                    const tags =response[4]
+                    const ls  =response[5]
+                    const pls =response[6]
+                    //const exchange= await fetchData({ chapter, number })
+                    //let exchange = new Set();
                   
                     
                     
                     
                     //res1.records.map(e => JSON.stringify(toNativeTypes(e.get('exchange')))).forEach(e => exchange.add(e))
-                    exchange.add(res.records[1]._fields[1])
-                    console.log("disect",res.records[1]._fields[1])
+                    //exchange.add(res.records[1]._fields[1])
+                    //console.log("disect",res.records[1]._fields[1])
                     
-                    exchange = Array.from(exchange).map(e => JSON.parse(e))
+                    //exchange = Array.from(exchange).map(e => JSON.parse(e))
 
             console.log('exchange',exchange)
             setSpeaker([exchange[0].start.properties.name])
             setAddressee(exchange.map(e => e.end.properties.name))
             setJPRM([exchange[0].segments[0].end.properties.Japanese, exchange[0].segments[0].end.properties.Romaji])
             setNotes(exchange[0].segments[0].end.properties.notes)
-            let transTemp = res.records.map(e => toNativeTypes(e.get('trans'))).map(e => [e.end.properties.name, e.segments[0].end.properties.translation, e.segments[1].start.properties.WaleyPageNum])
+            //let transTemp = res.records.map(e => toNativeTypes(e.get('trans'))).map(e => [e.end.properties.name, e.segments[0].end.properties.translation, e.segments[1].start.properties.WaleyPageNum])
             transTemp.forEach(e =>
                 setTrans(prev => ({
                     ...prev,
                     [e[0]]: e[0] !== 'Waley' ? e[1] : [e[1], e[2]]
                 })))
-            let sources = resHonkaInfo.records.map(e => [Object.values(toNativeTypes(e.get('honka'))).join(''), Object.values(toNativeTypes(e.get('title'))).join(''), Object.values(toNativeTypes(e.get('romaji'))).join(''), Object.values(toNativeTypes(e.get('poet'))).join(''), Object.values(toNativeTypes(e.get('order'))).join(''), Object.values(toNativeTypes(e.get('translator'))).join(''), Object.values(toNativeTypes(e.get('translation'))).join(''), e.get('notes') !== null ? Object.values(toNativeTypes(e.get('notes'))).join('') : 'N/A'])
+            //let sources = resHonkaInfo.records.map(e => [Object.values(toNativeTypes(e.get('honka'))).join(''), Object.values(toNativeTypes(e.get('title'))).join(''), Object.values(toNativeTypes(e.get('romaji'))).join(''), Object.values(toNativeTypes(e.get('poet'))).join(''), Object.values(toNativeTypes(e.get('order'))).join(''), Object.values(toNativeTypes(e.get('translator'))).join(''), Object.values(toNativeTypes(e.get('translation'))).join(''), e.get('notes') !== null ? Object.values(toNativeTypes(e.get('notes'))).join('') : 'N/A'])
             let src_obj = []
             let index = 0
             let entered_honka = []
@@ -248,26 +256,26 @@ export default function PoemPage() {
                 }
             })
             setSource(src_obj)
-            let related = new Set()
-            resRel.records.map(e => toNativeTypes(e.get('rel'))).forEach(e => related.add([Object.values(e).join('')]))
+            //let related = new Set()
+            //resRel.records.map(e => toNativeTypes(e.get('rel'))).forEach(e => related.add([Object.values(e).join('')]))
             related = Array.from(related).flat()
             related = related.map(e => [e, true])
             setRel(related)
-            let tags = new Set()
-            resTag.records.map(e => toNativeTypes(e.get('type'))).forEach(e => tags.add([Object.values(e).join('')]))
+            //let tags = new Set()
+            //resTag.records.map(e => toNativeTypes(e.get('type'))).forEach(e => tags.add([Object.values(e).join('')]))
             tags = Array.from(tags).flat()
             tags = tags.map(e => [e, true])
             setTag(tags)
-            let types = resType.records.map(e => e.get('type'))
-            let ls = []
-            types.forEach(e => ls.push({value: e, label: e})) 
+            //let types = resType.records.map(e => e.get('type'))
+            //let ls = []
+            //types.forEach(e => ls.push({value: e, label: e})) 
             setTagType(ls)
-            let temp = resPnum.records.map(e => e.get('pnum'))
+            /*let temp = resPnum.records.map(e => e.get('pnum'))
             let pls = []
             temp.forEach(e => {
                 pls.push({value:e, label:e})
             })
-            setPnum(pls)
+            setPnum(pls)*/
             session.close()
             closeDriver()
 
