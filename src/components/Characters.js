@@ -7,6 +7,8 @@ import { traj } from './traj'
 import 'reactflow/dist/style.css';
 import '../reactflow.css'
 
+import axios from 'axios';
+
 export default function Characters() {
     const [graph, setGraph] = React.useState([])
     const [isLoading, setIsLoading] = React.useState(true)
@@ -67,7 +69,7 @@ export default function Characters() {
 
     useEffect(() => {
         const _ = async() => {
-            initDriver(process.env.REACT_APP_NEO4J_URI,
+            /*initDriver(process.env.REACT_APP_NEO4J_URI,
                 process.env.REACT_APP_NEO4J_USERNAME,
                 process.env.REACT_APP_NEO4J_PASSWORD)
             const driver = getDriver()
@@ -76,7 +78,9 @@ export default function Characters() {
             resGraph = resGraph.records.map(e => [concatObj(toNativeTypes(e.get('startName'))), concatObj(toNativeTypes(e.get('rel'))), concatObj(toNativeTypes(e.get('endName')))])
             setGraph(generateGeneology(resGraph))
             session.close()
-            closeDriver()
+            closeDriver()*/
+            const graph = await axios.get('http://localhost:8000/characterGraph')
+            setGraph(generateGeneology(graph))
             setIsLoading(false)
         }
         _().catch(console.error)

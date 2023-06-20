@@ -51,6 +51,9 @@ function valueToNativeType(value) {
   return value
 }
 
+function concatObj(e) {
+  return Object.values(e).join('')
+}
 
 app.get("/api", (req,res) =>{
   res.json({"users":["user"]})
@@ -98,9 +101,13 @@ app.get('/getAllData', async (req, res) => {
       //related
       let related = new Set()
       result['resRel'].records.map(e => toNativeTypes(e.get('rel'))).forEach(e => related.add([Object.values(e).join('')]))
+      related = Array.from(related).flat()
+      related = related.map(e => [e, true])
       //res tag
       let tags = new Set()
       result['resTag'].records.map(e => toNativeTypes(e.get('type'))).forEach(e => tags.add([Object.values(e).join('')]))
+      tags = Array.from(tags).flat()
+      tags = tags.map(e => [e, true])
       //types
       let types = result['resType'].records.map(e => e.get('type'))
       //ls
@@ -125,5 +132,21 @@ app.get('/getAllData', async (req, res) => {
       await session.close();
   }
 });
+
+
+app.get('/tagQueries', async (req, res) => {
+  const session = driver.session();
+  const query = req.query;
+  let write =  await session.writeTransaction(tx => tx.run(query));
+  res.json(write);
+})
+
+app.get('/characterGraph', async (req, res) => {
+  const session = driver.session();
+  let resGraph = await session.readTransaction(tx => tx.run('MATCH (a:Character)-[r]-(b:Character) return a.name as startName, TYPE(r) as rel, b.name as endName'))
+  resGraph = resGraph.records.map(e => [concatObj(toNativeTypes(e.get('startName'))), concatObj(toNativeTypes(e.get('rel'))), concatObj(toNativeTypes(e.get('endName')))])
+  res.json(resGraph);
+})
+
 
 app.listen(8000,()=> {console.log("Server started on port 8000")})

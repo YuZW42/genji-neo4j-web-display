@@ -178,13 +178,13 @@ export default function PoemPage() {
             Cranston: 'N/A'
         })
         const _ = async () => {
-            initDriver(process.env.REACT_APP_NEO4J_URI,
+            /*initDriver(process.env.REACT_APP_NEO4J_URI,
                 process.env.REACT_APP_NEO4J_USERNAME,
                 process.env.REACT_APP_NEO4J_PASSWORD)
-            const driver = getDriver()
+            //const driver = getDriver()
             const session = driver.session()
-            const res1 = await session.readTransaction(tx => tx.run(get))
-           console.log('call from front end', res1)
+            const res1 = await session.readTransaction(tx => tx.run(get))*/
+           
             // Adding //
             const fetchData = async (params = {}) => {
                 try {
@@ -258,13 +258,13 @@ export default function PoemPage() {
             setSource(src_obj)
             //let related = new Set()
             //resRel.records.map(e => toNativeTypes(e.get('rel'))).forEach(e => related.add([Object.values(e).join('')]))
-            related = Array.from(related).flat()
-            related = related.map(e => [e, true])
+            //related = Array.from(related).flat()
+            //related = related.map(e => [e, true])
             setRel(related)
             //let tags = new Set()
             //resTag.records.map(e => toNativeTypes(e.get('type'))).forEach(e => tags.add([Object.values(e).join('')]))
-            tags = Array.from(tags).flat()
-            tags = tags.map(e => [e, true])
+            //tags = Array.from(tags).flat()
+            //tags = tags.map(e => [e, true])
             setTag(tags)
             //let types = resType.records.map(e => e.get('type'))
             //let ls = []
@@ -276,8 +276,8 @@ export default function PoemPage() {
                 pls.push({value:e, label:e})
             })
             setPnum(pls)*/
-            session.close()
-            closeDriver()
+            //session.close()
+            //closeDriver()
 
                 } catch (error) {
                     console.error(error);
@@ -302,34 +302,36 @@ export default function PoemPage() {
     // async func for tag queries
     useMemo(() => {
         const _ = async () => {
-            initDriver(process.env.REACT_APP_NEO4J_URI,
+            /*initDriver(process.env.REACT_APP_NEO4J_URI,
                 process.env.REACT_APP_NEO4J_USERNAME,
                 process.env.REACT_APP_NEO4J_PASSWORD)
             const driver = getDriver()
             const session = driver.session()
             let write = await session.writeTransaction(tx => tx.run(query[0]))
             session.close()
-            closeDriver()
+            closeDriver()*/
+            const write = await axios.get('http://localhost:8000/getQueries',  query[0])
+            if (query.length > 0) {
+                if (query[1] === 'create tag') {
+                    _().catch(console.error)
+                    alert('tag created!')
+                } else if (query[1] === 'delete tag') {
+                    _().catch(console.error)
+                    alert('tag deleted!')
+                } else if (query[1] === 'create rel') {
+                    _().catch(console.error)
+                    alert('link created!')
+                } else if (query[1] === 'delete rel') {
+                    _().catch(console.error)
+                    alert('link delete!')
+                } else if (query[1] === 'notes' && query[0] !== '') {
+                    _().catch(console.error)
+                    alert('Notes updated!')
+                    setQuery([])
+                }
+            } 
         }
-        if (query.length > 0) {
-            if (query[1] === 'create tag') {
-                _().catch(console.error)
-                alert('tag created!')
-            } else if (query[1] === 'delete tag') {
-                _().catch(console.error)
-                alert('tag deleted!')
-            } else if (query[1] === 'create rel') {
-                _().catch(console.error)
-                alert('link created!')
-            } else if (query[1] === 'delete rel') {
-                _().catch(console.error)
-                alert('link delete!')
-            } else if (query[1] === 'notes' && query[0] !== '') {
-                _().catch(console.error)
-                alert('Notes updated!')
-                setQuery([])
-            }
-        } 
+ 
     }, [query])
 
     return (
