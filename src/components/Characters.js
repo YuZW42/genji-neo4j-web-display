@@ -3,7 +3,7 @@ import { ReactFlowProvider } from 'reactflow';
 import { initDriver, getDriver, closeDriver } from '../neo4j'
 import { concatObj, toNativeTypes } from './utils';
 import GeneologyMap from './GeneologyMap';
-import { traj } from './traj'
+//import { traj } from '../../BackEnd/traj'
 import 'reactflow/dist/style.css';
 import '../reactflow.css'
 
@@ -15,7 +15,7 @@ export default function Characters() {
     /**
      * @param {Array} l the array of edges
      */
-    function generateGeneology(l) {
+   /* function generateGeneology(l) {
         let counts = l.reduce((acc, subArr) => {
             subArr.forEach(str => {
                     if (!str.includes('_')){
@@ -65,7 +65,7 @@ export default function Characters() {
             id += 1
         })
         return [nodes, edges]
-    }
+    }*/
 
     useEffect(() => {
         const _ = async() => {
@@ -79,8 +79,9 @@ export default function Characters() {
             setGraph(generateGeneology(resGraph))
             session.close()
             closeDriver()*/
-            const graph = await axios.get('http://localhost:8000/characterGraph')
-            setGraph(generateGeneology(graph))
+            const graph = await axios.get('http://localhost:8000/characterGraph');
+            console.log('nodes',graph.data[0])
+            setGraph([graph.data[0],graph.data[1]]);
             setIsLoading(false)
         }
         _().catch(console.error)

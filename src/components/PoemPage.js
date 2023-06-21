@@ -274,8 +274,8 @@ export default function PoemPage() {
             let pls = []
             temp.forEach(e => {
                 pls.push({value:e, label:e})
-            })
-            setPnum(pls)*/
+            })*/
+            setPnum(pls)
             //session.close()
             //closeDriver()
 
@@ -310,7 +310,7 @@ export default function PoemPage() {
             let write = await session.writeTransaction(tx => tx.run(query[0]))
             session.close()
             closeDriver()*/
-            const write = await axios.get('http://localhost:8000/getQueries',  query[0])
+            const write = await axios.get('http://localhost:8000/tagQueries',  query[0])
             if (query.length > 0) {
                 if (query[1] === 'create tag') {
                     _().catch(console.error)
